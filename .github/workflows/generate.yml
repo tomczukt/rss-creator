@@ -34,6 +34,7 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add feed.xml feed_*.xml
+          git add feed.xml
+          ls feed_*.xml 2>/dev/null | xargs -r git add
           git commit -m "Update RSS feed" || echo "No changes"
           git push
