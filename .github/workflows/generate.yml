@@ -2,7 +2,7 @@ name: Generate RSS Feed
 
 on:
   schedule:
-    - cron: '0 6 * * 6'
+    - cron: '0 6 * * 6'  # Sobota 06:00 UTC (czyli 08:00 w Polsce)
   workflow_dispatch:
 
 jobs:
@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # ważne, żeby użyć własnego tokena poniżej
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,10 +26,14 @@ jobs:
       - name: Generate RSS
         run: python generate_rss.py
 
+      - name: Set up push permissions
+        run: |
+          git config user.name "rss-bot"
+          git config user.email "bot@example.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+
       - name: Commit and push changes
         run: |
-          git config --global user.name "rss-bot"
-          git config --global user.email "bot@example.com"
-          git add feed.xml
+          git add feed.xml feed_*.xml
           git commit -m "Update RSS feed" || echo "No changes"
           git push
