@@ -1,8 +1,6 @@
 name: Generate RSS Feed
 
 on:
-  schedule:
-    - cron: '0 6 * * 6'  # Sobota 06:00 UTC (czyli 08:00 w Polsce)
   workflow_dispatch:
 
 jobs:
